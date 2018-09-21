@@ -49,7 +49,6 @@ export class Provider extends  Component {
     }
 
 async componentDidMount() {
-  //console.log("this.props context : ", this.props)
     axios.defaults.baseURL = pathServer + 'users'
     const res = await axios
       .get()
