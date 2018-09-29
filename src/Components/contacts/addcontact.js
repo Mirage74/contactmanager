@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
-import {Consumer} from '../../context'
 import TextInputGroup from '../layout/textinputgroup'
+import PropTypes from 'prop-types'
 import uuid from 'uuid'
-import axios from 'axios'
-import pathServer from "../backendpath"
+import {connect} from 'react-redux';
+import {addContact} from '../../Actions/contactactions'
 
 class AddContact extends Component {
   state = {
@@ -13,10 +13,10 @@ class AddContact extends Component {
     errors: {}
   }
 
-  onSubmit = async (dispatch, e) => {
+
+  onSubmit = e => {
 
     e.preventDefault()
-
     const {name, email, phone} = this.state
 
     //Check For Errors
@@ -40,15 +40,7 @@ class AddContact extends Component {
       phone
     }
 
-   const configAx = {
-      //method: 'post',
-      data: newContact
-    }
-
-
-    const res = await axios.post(pathServer + 'users', configAx)
-    dispatch({type: 'ADD_CONTACT', payload: res.data})
-
+    this.props.addContact(newContact)
 
     //Clear State
     this.setState({
@@ -61,25 +53,17 @@ class AddContact extends Component {
     this.props.history.push('/')
    }
 
-  async componentDidMount() {
-    //console.log("this.props add: ", this.props)
-  }
 
   onChange = (e) => this.setState({ [e.target.name] : e.target.value})
 
 
-
   render() {
     const {name, email, phone, errors} = this.state
-    return (
-      <Consumer>
-        {value =>{
-          const {dispatch} = value
           return (
             <div className="card mb-3">
               <div className="card-header">Add Contact</div>
               <div className="card-body">
-                <form onSubmit={this.onSubmit.bind(this, dispatch)}>
+                <form onSubmit={this.onSubmit}>
                   <TextInputGroup
                     label="Name"
                     name="name"
@@ -113,10 +97,14 @@ class AddContact extends Component {
               </div>
             </div>
           )
-        }}
-      </Consumer>
-    )
   }
 }
 
-export default AddContact
+AddContact.propTypes = {
+  addContact: PropTypes.func.isRequired
+}
+
+export default connect(
+  null,
+  {addContact}
+)(AddContact)

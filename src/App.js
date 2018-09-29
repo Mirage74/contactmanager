@@ -8,8 +8,8 @@ import EditContact from './Components/contacts/editcontact'
 import About from './Components/pages/about'
 import NotFound from './Components/pages/notfound'
 import Test from './Components/test/test'
-
-import  {Provider} from './context'
+import {Provider} from 'react-redux'
+import  store from './store'
 
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './App.css';
@@ -17,7 +17,7 @@ import './App.css';
 class App extends Component {
   render() {
     return (
-      <Provider>
+        <Provider store = {store}>
         <Router basename = {process.env.PUBLIC_URL}>
           <div className="App">
             <Header branding = "Contact Manager" />
@@ -41,7 +41,7 @@ class App extends Component {
               </Switch>
           </div>
         </Router>
-      </Provider>
+        </Provider>
     );
   }
 }

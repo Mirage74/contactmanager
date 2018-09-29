@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
-import {Consumer} from '../../context'
 import TextInputGroup from '../layout/textinputgroup'
-import pathServer from "../backendpath"
-import axios from 'axios'
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
+import { getContact, updateContact } from '../../Actions/contactactions'
 
 class EditContact extends Component {
   state = {
@@ -12,24 +12,26 @@ class EditContact extends Component {
     errors: {}
   }
 
-  async componentDidMount() {
+
+async componentDidMount() {
     //console.log("this.props.match.params : ", this.props.match.params)
     const {_id} = this.props.match.params
-    const res = await axios.get(pathServer + `users/${_id}`)
-    const contact = res.data
-    //console.log(contact)
+    //console.log("_id: ", _id)
+    const res = await this.props.getContact(_id)
+    const {name, email, phone} = res
     this.setState({
-      name: contact.name,
-      email: contact.email,
-      phone: contact.phone
+          name,
+          email,
+          phone
     })
   }
 
-  onSubmit = async (dispatch, e) => {
+  onSubmit = e => {
 
     e.preventDefault()
 
-    const {id, name, email, phone} = this.state
+    //const {id, name, email, phone} = this.state
+    const {name, email, phone} = this.state
 
     //Check For Errors
     if (name === '') {
@@ -49,22 +51,13 @@ class EditContact extends Component {
   const {_id} = this.props.match.params
 
   const updContact = {
-      id,
+      _id,
       name,
       email,
       phone
     }
-    const configAx = {
-      method: 'put',
-      data: updContact
-    }
-
-    const res = await axios.put(pathServer + `users/${_id}`, configAx)
-    //console.log("res edit : ", res.data)
-    //console.log("res data id : ", res.data._id)
-
-    dispatch({type: 'UPDATE_CONTACT', payload: res.data})
-
+  //console.log("updContact: ", updContact)
+  this.props.updateContact(updContact)
 
 
     //Clear State
@@ -84,15 +77,11 @@ class EditContact extends Component {
 
   render() {
     const {name, email, phone, errors} = this.state
-    return (
-      <Consumer>
-        {value =>{
-          const {dispatch} = value
           return (
             <div className="card mb-3">
               <div className="card-header">Edit Contact</div>
               <div className="card-body">
-                <form onSubmit={this.onSubmit.bind(this, dispatch)}>
+                <form onSubmit={this.onSubmit}>
                   <TextInputGroup
                     label="Name"
                     name="name"
@@ -126,10 +115,20 @@ class EditContact extends Component {
               </div>
             </div>
           )
-        }}
-      </Consumer>
-    )
   }
 }
 
-export default EditContact
+EditContact.propTypes = {
+    getContact: PropTypes.func.isRequired
+}
+
+const mapStateToProps = state => ({
+  contact: state.contact.contact
+})
+
+export default connect(
+  mapStateToProps,
+//  null,
+  {getContact, updateContact}
+)(EditContact)
+

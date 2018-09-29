@@ -1,19 +1,24 @@
-import {GET_CONTACTS, DELETE_CONTACT, ADD_CONTACT} from '../actions/types'
-import axios from 'axios'
-import pathServer from "../Components/backendpath"
+import {GET_CONTACTS, GET_CONTACT, DELETE_CONTACT, ADD_CONTACT, UPDATE_CONTACT} from '../Actions/types'
 
-const initialState = async () => {
-  axios.defaults.baseURL = pathServer + 'users'
-  return await axios.get()
+const initialState =  {
+  contacts: []
 }
 
-export default function (state = initialState, action)
+export default function (state = initialState, action) {
   switch (action.type) {
     case GET_CONTACTS:
+
       return {
         ...state,
         contacts: action.payload
       }
+
+    case GET_CONTACT:
+      return {
+        ...state,
+        contact: action.payload
+      }
+
     case DELETE_CONTACT:
       return {
         ...state,
@@ -26,10 +31,24 @@ export default function (state = initialState, action)
       return {
         ...state,
         contacts : [action.payload, ...state.contacts]
-        )
       }
 
+    case UPDATE_CONTACT:
+      return {
+        ...state,
+        contacts: state.contacts.map(
+          contact =>
+            contact._id === action.payload._id
+              ? (contact = action.payload)
+              : contact
+        )
+      };
+
+    default:
+      return state
+
   }
+}
 
   
 

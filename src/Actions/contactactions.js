@@ -1,6 +1,7 @@
 import {GET_CONTACTS, DELETE_CONTACT, ADD_CONTACT, GET_CONTACT, UPDATE_CONTACT} from './types'
-import axios from 'axios'
 import pathServer from "../Components/backendpath"
+import axios from 'axios'
+
 
 export const getContacts = () => async dispatch => {
   axios.defaults.baseURL = pathServer + 'users'
@@ -19,27 +20,26 @@ export const getContact = id => async dispatch => {
     type: GET_CONTACT,
     payload: res.data
   })
+  return(res.data)
 }
 
 export const deleteContact = id => async dispatch => {
-  try {
-    await axios.delete(pathServer + `users/${id}`)
-    dispatch({
-      type: DELETE_CONTACT,
-      payload: id
-    })
-  } catch (e) {
-    dispatch({
-      type: DELETE_CONTACT,
-      payload: id
-    })
-  }
+  await axios.delete(pathServer + `users/${id}`)
+  dispatch({
+    type: DELETE_CONTACT,
+    payload: id
+  })
 }
 
 export const addContact = contact => async dispatch => {
+  //console.log("contact: ", contact)
+
+  const configAx = {
+    data: contact
+  }
   const res = await axios.post(
     pathServer + 'users',
-    contact
+    configAx
   )
   dispatch({
     type: ADD_CONTACT,
@@ -48,9 +48,14 @@ export const addContact = contact => async dispatch => {
 }
 
 export const updateContact = contact => async dispatch => {
+  //console.log("update, contact", contact)
+  const configAx = {
+    method: 'put',
+    data: contact
+  }
   const res = await axios.put(
-    pathServer + `users/${contact.id}`,
-    contact
+    pathServer + `users/${contact._id}`,
+    configAx
   )
   dispatch({
     type: UPDATE_CONTACT,
