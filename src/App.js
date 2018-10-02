@@ -20,7 +20,7 @@ class App extends Component {
         <Provider store = {store}>
         <Router basename = {process.env.PUBLIC_URL}>
           <div className="App">
-            <Header branding = "Contact Manager" />
+            <Header branding = "Contact Manager, please visit page 'About' for more information" />
               <Switch>
                 <Route exact path='/'
                        component = {Contacts}
